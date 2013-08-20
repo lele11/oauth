@@ -1,0 +1,116 @@
+<style type="text/css">
+.client-title-form {
+	padding-bottom: 20px;
+	padding-top: 20px;
+	padding-left: 30px;
+}
+.info-row {
+	margin-top: 5px;
+}
+.info-label {
+	float: left;
+	width: 120px;
+	text-align: right;
+	padding-right: 20px;
+	padding-top: 5px;
+}
+.btn{
+	margin-left: 140px;
+	width: 80px;
+}
+</style>
+<ul class="nav nav-tabs">
+    <li class="active"><a href="<?php echo $this->url('', array('action' => 'index')); ?>" title="<?php _e('Add Client'); ?>"><?php _e('Add Client'); ?></a></li>
+    <li><a href="<?php echo $this->url('', array('action' => 'list')); ?>" title="<?php _e('Client List'); ?>"><?php _e('Client List');?></a></li>
+    
+</ul>
+
+<div class="client-title-form">
+	<h4>保存模块的授权服务器地址和身份信息</h4>
+</div>
+<div class="client-info-form">
+
+<?php echo $this->form()->openTag($form);
+
+$elements = $form->elementList();
+$validate = $form->getMessages();
+$groups = $form->getGroups();
+/**#@-**/
+
+/**#@++
+ * Temporary function for element display
+ */
+$_this = $this;
+$renderElement = function ($element) use ($_this)
+{
+    if ($element->getAttribute('type') != 'checkbox') {
+        $element->setLabelAttributes(array('class' => 'info-label'));
+        echo $_this->formLabel($element);
+        // 添加对表单对象的描述
+        // $desc = $element->getAttribute('description');
+        // if ($desc) {
+        //     echo '<span class="what-this" data-original-title="' . $_this->escape($desc) . '">?</span>';
+        // }
+    }
+        echo $_this->formElement($element);
+        echo $_this->formElementErrors($element, array('class' => 'help-inline'));
+};
+
+$renderRow = function ($element) use ($_this, $validate, $renderElement)
+{
+    if (method_exists($element, 'getElements')) {
+        echo '<div class="legend">' .  $_this->formLabel($element) . '</div>';
+
+        $eles = $element->elementList();
+        foreach ($eles['active'] as $ele) {
+            echo '<div>';
+            $renderElement($ele);
+            echo '</div>';
+        }
+        echo '
+        <script>
+            $(".help-inline").parents(".control-group").addClass("error");
+        </script>';
+    } else {
+        echo '<div class="info-row';
+        if (!empty($validate[$element->getName()])) {
+            echo ' error';
+        }
+        echo '">';
+        $renderElement($element);
+        echo '</div>';
+    }
+};
+/**#@-**/
+
+if (!$groups) {
+    foreach ($elements['active'] as $element) {
+        //d($element->getName());
+        $renderRow($element);
+    }
+} else {
+    foreach ($groups as $group) {
+    ?>
+        <div class="legend"><?php echo $this->escape($group['label']); ?></div>
+        <?php
+        foreach ($group['elements'] as $name) {
+            $element = $form->get($name);
+            $renderRow($element);
+        }
+    }
+}
+
+/**#@+
+ * Add hidden elements
+ */
+foreach ($elements['hidden'] as $element) {
+    echo $this->formElement($element);
+}
+/**#@-**/
+
+echo '<div>' . $this->formElement($elements['submit']) . '</div>';
+
+
+echo $this->form()->closeTag();
+?>
+</div>

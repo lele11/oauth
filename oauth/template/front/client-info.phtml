@@ -1,0 +1,159 @@
+<style type="text/css">
+.form_table dt, .form_table dd {
+float: left;
+line-height: 25px;
+}
+.form_table dt {
+width: 140px;
+text-align: right;
+padding-right: 15px;
+white-space: nowrap;
+color: #666;
+}
+.form_table dd{
+word-wrap: break-word;
+width: 260px;
+}
+.op_title{
+height: 29px;
+overflow: hidden;
+border-top: 1px solid #e2e2e2;
+padding: 0 5px 0 10px;
+line-height: 29px;
+}
+.op_title span{
+  font-size: 14px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+.op_title .fl{
+float: left;
+}
+.op_title .fr{
+	float: right;
+}
+.notice_warn{
+  position: absolute;
+  margin-top: -5px;
+  display: inline;
+}
+
+</style>
+<?php $this->jQuery();?>
+<?php if (!empty($client) && $client['uid'] = $uid) { ?>
+
+<div id="showZone" >
+  <div class="op_title">
+  <div class="fl">
+    <span >应用基本信息</span>
+  </div>
+  <div class="fr"><a href="javascript:edit();" class="op_title_btn"><span>编辑</span></a></div>
+  </div>
+  <div class="form_table">
+  <dl class="clearfix" >
+    <dt>应用名称：</dt><dd><?php echo $client['name']; ?></dd>
+  </dl>
+  <dl class="clearfix" >
+    <dt>应用地址：</dt><dd><?php echo $client['address']; ?></dd>
+  </dl>
+    <dl class="clearfix" >
+    <dt>应用图标：</dt><dd><?php echo $client['logo']; ?></dd>
+  </dl>
+  <dl class="clearfix">
+    <dt>Client ID：</dt><dd><?php echo $client['client_id']; ?></dd>
+  </dl>
+  <dl class="clearfix">
+    <dt>Client Secret：</dt><dd><?php echo $client['client_secret']; ?></dd>
+  </dl>
+  <dl class="clearfix">
+    <dt>创建时间：</dt><dd><?php echo date('Y-m-d', $client['time_create']) ;?></dd>
+  </dl>
+  <dl class="clearfix">
+    <dt>授权回调地址：</dt><dd><?php echo $client['redirect_uri']; ?></dd>
+  </dl>
+  <dl class="clearfix">
+    <dt>应用介绍：</dt><dd><?php echo $client['description']; ?></dd>
+  </dl>
+  </div>
+</div>
+
+<div id="editZone" style="display:none">
+  <div class="op_title">
+  <div class="fl"><span>应用基本信息</span></div>
+  </div>
+  <div class="form_table">
+    <input id="id" type="hidden" value="<?php echo $client['id']; ?>">
+  <dl class="clearfix">
+    <dt>应用名称：</dt><dd><input id="client_name" type="text" name="name" value="<?php echo $client['name']; ?>" ></dd>
+    <dd><div class="notice_warn">该名称也用于来源显示，不超过10个汉字或20个字母</div></dd>
+  </dl>
+  <dl class="clearfix">
+    <dt>Client ID：</dt><dd ><?php echo $client['client_id'];?></dd>
+  </dl>
+  <dl class="clearfix">
+    <dt>Client Secret：</dt><dd><?php echo $client['client_secret'];?></dd>
+  </dl>
+    <dl class="clearfix">
+    <dt>应用地址：</dt><dd><input id="address" type="text" name="address" value="<?php echo $client['address']; ?>" ></dd>
+    <dd><div class="notice_warn">应用的地址</div></dd>
+  </dl>
+      <dl class="clearfix">
+    <dt>应用logo：</dt><dd><input id="logo" type="text" name="logo" value="<?php echo $client['logo']; ?>" ></dd>
+    <dd><div class="notice_warn">应用的图标</div></dd>
+  </dl>
+  <dl class="clearfix">
+  <dt>授权回调地址：</dt><dd><input id="redirect_uri" type="text" name="redirect_uri" value="<?php echo $client['redirect_uri']; ?>"></dd>
+    <dd><div class="notice_warn">授权过程的回调地址必须在该域名地址下</div>
+    </dd>
+  </dl>
+  <dl class="clearfix">
+    <dt>应用介绍：</dt><dd><textarea id="description" name="description" ><?php echo $client['description']; ?></textarea></dd>
+    <dd><div class="notice_warn">简述应用的作用、使用方法等信息，将显示在应用广场中，不超过1000汉字</div></dd>
+  </dl>
+  <dl class="clearfix">
+    <dt>创建时间：</dt><dd><?php echo date('Y-m-d', $client['time_create']);?></dd>
+  </dl>
+  <dl class="clearfix">
+    <dt> &nsp</dt>
+    <dd >
+    <button onclick="save()">保存</button><button onclick="cancle()">取消</button>
+    </dd>
+  </dl>
+  </div>
+</div>
+ <?php } else { ?>
+<div>还没有<a href="register">注册应用</a></div>
+ <?php } ?>
+<script type="text/javascript">
+function save(){
+    var name = document.getElementById("client_name").value;
+    var redirect = document.getElementById("redirect_uri").value;
+    var desc = document.getElementById("description").value;
+    var logo = document.getElementById("logo").value;
+    var address = document.getElementById("address").value;
+    var id = document.getElementById("id").value;
+    $.ajax(
+        {url:"./update",type:"POST",
+        data:{name : name, redirect_uri : redirect, id:id ,description : desc,logo:logo,address:address},
+        async:false,
+        success: function(data){
+          if (data == 1) {
+            window.location.reload();
+          }
+          if (data == 0) {
+            cancle();
+        }
+    }});
+ 
+}
+function cancle()
+{
+	document.getElementById('editZone').style.display="none";
+	document.getElementById('showZone').style.display="";
+}
+function edit()
+{
+	document.getElementById('showZone').style.display="none";
+	document.getElementById('editZone').style.display="";
+}
+</script>

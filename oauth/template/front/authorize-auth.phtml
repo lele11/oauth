@@ -1,0 +1,24 @@
+<h3>用户授权页面</h3>
+<p>允许<?php echo $client['name'];?>使用以下数据：</p>
+<ul>
+	<li>
+		<input type="checkbox" name="base"  chekced="disable" >
+<?php
+ if ($client['scope'] == 'base') {
+ 	echo '个人资料';
+ }
+?>
+	</li>
+</ul>
+<form method="post">
+
+<input type="hidden" value=1 name="auth">
+<input type="submit" value="授权">
+</form>
+<button onclick="back()">cancle</button>
+<script type="text/javascript">
+function back()
+{
+    window.location.href = "http://<?php echo $backuri . '?cancle=1' ?>";
+}
+</script>

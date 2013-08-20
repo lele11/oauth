@@ -1,0 +1,69 @@
+
+<style type="text/css">
+.clearfix {
+	clear: both;
+}
+.client-info-table {
+	line-height: 30px;
+	background-color: #F3F3F3;
+}
+.client-info-table .col1 {
+	width: 80px;
+}
+.client-info-table .col2 {
+	width: 100px;
+}
+.client-info-table .col3 {
+	width: 100px;
+}
+.client-info-table .col4 {
+	width: 350px;
+	line-height: 17px;
+}
+.client-info-table .col4 label{
+	width: 50px;
+	float: left;
+	line-height: 15px;
+	margin-bottom: 1px;
+	margin-right: 10px;
+	text-align: center;
+}
+</style>
+<?php
+    $this->bootstrap();
+    $this->css($this->assetModule('script/system-ui.css'));
+    $this->jQuery();
+    $this->backbone();
+?>
+<ul class="nav nav-tabs">
+    <li ><a href="<?php echo $this->url('', array('action' => 'index')); ?>" title="<?php _e('Add Client'); ?>"><?php _e('Add Client'); ?></a></li>
+    <li class="active"><a href="<?php echo $this->url('', array('action' => 'list')); ?>" title="<?php _e('Client List'); ?>"><?php _e('Client List');?></a></li>
+    
+</ul>
+<div class="client-info-list">
+	<?php if (!$client) { ?>
+	<p> 还没有信息</p>
+	<?php } else { ?>
+	<table class="client-info-table">
+		<tr>
+			<td class="col1">模块</td>
+			<td class="col2">授权服务器</td>
+			<td class="col3">服务器地址</td>
+			<td class="col4">身份信息</td>
+			<td class="col5">填写时间</td>
+		</tr>
+		<?php foreach($client as $value) {?>
+			<tr>
+				<td class="col1"><?php echo $value['module'] ;?></td>
+				<td class="col2"><?php echo $value['server'] ;?></td>
+				<td class="col3"><?php echo $value['server_host'] ;?></td>
+				<td class="col4">
+					<label class="clearfix">ID:</label><?php echo $value['client_id'] ;?><br />
+					<label class="clearfix">Secret:</label><?php echo $value['client_secret'] ;?><br />
+				</td>
+				<td class="col4"><?php echo date('Y-m-d h:m:s', $value['create_time']) ;?></td>
+			</tr>
+		<?php } }?>
+		
+	</table>
+</div>
