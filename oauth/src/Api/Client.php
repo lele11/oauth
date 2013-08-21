@@ -73,13 +73,13 @@ class Client extends AbstractApi
     }
 
     /**
-    * 生成授权申请链接
-    *
-    * @param string $module 调用接口的模块名称
-    * @param string $server 授权服务器的名称
-    * @param array $scope 授权范围数组，array('','',...)
-    * @param string $callback 回调地址 默认为模块提供的回调函数地址
-    * @return string 
+     * 生成授权申请链接
+     *
+     * @param string $module 调用接口的模块名称
+     * @param string $server 授权服务器的名称
+     * @param array $scope 授权范围数组，array('','',...)
+     * @param string $callback 回调地址 默认为模块提供的回调函数地址
+     * @return string 
     */
     public function getAuthorizeUrl($module, $server, $scope = NULL, $callback = NULL)
     {
@@ -97,21 +97,21 @@ class Client extends AbstractApi
         $params['response_type'] = 'code';        
         $params['scope'] = $scope_str;
         $params['state'] = $this->setState($module, $server);
-        d($params);
+     
         return $client['server_host'] . '/oauth/authorize/index' . "?" . http_build_query($params);       
     }
 
     /**
-    * 获取access_token
-    * @param string $module 调用接口的模块名称
-    * @param string $server 授权服务器的名称
-    * @param string $type 请求的类型,可以为:code, password, token, client
-    * @param array $keys 其他参数：
-    *   - 当$type为code时： array('code'=>..., 'redirect_uri'=>...)
-    *   - 当$type为password时： array('username'=>..., 'password'=>...)
-    *   - 当$type为token时： array('refresh_token'=>...)
-    *   - 当$type为client时：null
-    * @return array 
+     * 获取access_token
+     * @param string $module 调用接口的模块名称
+     * @param string $server 授权服务器的名称
+     * @param string $type 请求的类型,可以为:code, password, token, client
+     * @param array $keys 其他参数：
+     *   - 当$type为code时： array('code'=>..., 'redirect_uri'=>...)
+     *   - 当$type为password时： array('username'=>..., 'password'=>...)
+     *   - 当$type为token时： array('refresh_token'=>...)
+     *   - 当$type为client时：null
+     * @return array 
     */
     public function getAccessToken( $module, $server, $type , $keys ) 
     {
@@ -142,11 +142,22 @@ class Client extends AbstractApi
         $tokenUrl = $client['server_host'] . '/oauth/grant/index';
         $response = $this->oAuthRequest($tokenUrl, 'POST', $params);
         $token = json_decode($response, true);
-        $_SESSION['token'] = $token;
-        return $token;
+        if (!$token['error']) {
+            $this->setToken($token);
+        } else {
+            return $token;
+        }
     }
 
-
+    private function setToken($token)
+    {
+        unset($_SESSION['token']);
+        $_SESSION['token'] = array(
+            'access_token'  => $token['access_token'],
+            'expired'       => $token['expires_in'] + time(),
+            'refresh_token' => $token['refresh_token'],
+        );
+    }
     /**
     * 授权请求链接的state字符串，考虑添加时间标志，需要研究
     * @return string
@@ -193,6 +204,7 @@ class Client extends AbstractApi
             case 'GET':
                 $url = $url . '?' . http_build_query($parameters);
                 return $this->http($url, 'GET');
+                break;
             default:
                 $headers = array();
                 if ( is_array($parameters) ) {
@@ -221,13 +233,13 @@ class Client extends AbstractApi
     {
         $ci = curl_init();        
         curl_setopt($ci, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
-        curl_setopt($ci, CURLOPT_USERAGENT, $this->useragent);
+        curl_setopt($ci, CURLOPT_USERAGENT, 'test');
         // curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, $this->connecttimeout);
         // curl_setopt($ci, CURLOPT_TIMEOUT, $this->timeout);
         curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ci, CURLOPT_ENCODING, "");
         // curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, $this->ssl_verifypeer);
-        curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, 1);
+        // curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, 1);
         curl_setopt($ci, CURLOPT_HEADER, FALSE);
  
         if ($method == 'POST') {
@@ -240,21 +252,7 @@ class Client extends AbstractApi
         curl_setopt($ci, CURLOPT_HTTPHEADER, $headers );
         curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE );
  
-        $response = curl_exec($ci);
- 
-        if (0) {
-            echo "=====post data======\r\n";
-            var_dump($postfields);
- 
-            echo "=====headers======\r\n";
-            print_r($headers);
- 
-            echo '=====request info====='."\r\n";
-            print_r( curl_getinfo($ci) );
- 
-            echo '=====response====='."\r\n";
-            print_r( $response );
-        }
+        $response = curl_exec($ci);        
         curl_close ($ci);
         return $response;
     }

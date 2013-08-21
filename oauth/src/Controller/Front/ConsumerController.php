@@ -8,8 +8,7 @@ class ConsumerController extends ActionController
 {
     public function indexAction()
     {
-        $url = Pi::service('api')->oauth(array('client','getAuthorizeUrl'),'demo', 'oauth');
-        d($url);
+        
     }
 
     /**
@@ -40,11 +39,10 @@ class ConsumerController extends ActionController
         if (!$code) {
             $token['error'] = 'missing code';
         } else {
-            $redirect_uri = $_SERVER['HTTP_HOST'] . '/oauth/consumer/callback';
-            $token = Pi::service('api')->oauth->getAccessToken($module, $server,'code', array('code' => $code,'redirect_uri' => $redirect_uri));            
+            $redirect_uri = Pi::url('/oauth/consumer/callback');
+            $token = Pi::service('api')->oauth(array('client','getAccessToken'),$module, $server,'code', array('code' => $code,'redirect_uri' => $redirect_uri));            
         }
-        if (!isset($token['error'])) {
-            $_SESSION['token'] = $token;
+        if (!isset($token['error'])) {              
             // $this->view()->assign('url', $next);
             $this->view()->setTemplate('callback-jump');
         } else {
