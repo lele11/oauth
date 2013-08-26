@@ -20,7 +20,7 @@ class ClientController extends ActionController
     */
     public function registerAction()
     {
-        if (!User::isLogin()) {
+        if (!Pi::user()->hasIdentity()) {
             $login_page = 'http://pi-oauth.com/system/login/index';
             $this->view()->assign('login',$login_page);
             $this->view()->setTemplate('authorize-redirect');
@@ -37,7 +37,7 @@ class ClientController extends ActionController
                 $this->view()->assign('form', $form);
                 return;
             }
-            $uid = User::getUserid();
+            $uid = Pi::user()->getUser()->id;
             $data = $form->getData();       
             d($data);     
             $data = array(
@@ -65,7 +65,7 @@ class ClientController extends ActionController
     public function listAction()
     {
         $id = $this->params('id', '');
-        $userid = User::getUserid();
+        $userid = Pi::user()->getUser()->id;
         Oauth::boot($this->config());
         if (!$id) {
             $result = Oauth::storage('client')->getClientByUid($userid);

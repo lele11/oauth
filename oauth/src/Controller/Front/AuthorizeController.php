@@ -24,7 +24,7 @@ class AuthorizeController extends ActionController
         $authorize = Oauth::server('authorization');
         $request = Oauth::request();
         $params = $this->getParams();
-        $params['resource_owner'] = User::getUserid();;
+        $params['resource_owner'] = Pi::user()->getUser()->id;
         $request->setParameters($params); 
 
         if ($authorize->validateRequest($request)) {
@@ -34,21 +34,20 @@ class AuthorizeController extends ActionController
             }
 
             if (!$login_status) {
-                $login_status = !$this->isLogin();
+                $login_status = !Pi::user()->hasIdentity();
             } else {
                 // User::logout();
             }
 
             if ($login_status) {
                 // $this->loginPage();
-                $login_page = 'http://pi-oauth.com/system/login/index';
+                $login_page = Pi::url('/system/login/index');//TODO
                 $this->view()->assign('login',$login_page);
                 $this->view()->setTemplate('authorize-redirect');
                 return;
             }
             if (!$request->ispost()) {
                 $client = Oauth::storage('client')->getClient($params['client_id']);
-                d($client);
                 $this->view()->assign('client', $client);
                 $this->view()->assign('backuri',$params['redirect_uri']);       
                 $this->view()->setTemplate('authorize-auth');
@@ -75,14 +74,6 @@ class AuthorizeController extends ActionController
         $this->redirect()->toUrl($resource_login);
     }
 
-    /**
-    * check if user logged
-    * @return bool
-    */
-    protected function isLogin()
-    {
-        return User::isLogin();
-    }
     /**
     * get paramesters of request  
     *

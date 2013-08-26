@@ -1,9 +1,10 @@
 <?php
-namespace Oauth\Provider\Storage\Model\Database;
+namespace Pi\Oauth\Provider\Storage\Model\Database;
 
 use Pi\Oauth\Provider\Storage\ValidateInterface;
+use Pi\Oauth\Provider\Storage\Model\Database\AbstractModel;
 
-class Client extends AbstractModel implements ValidateInterface
+class ResourceOwner extends AbstractModel implements ValidateInterface
 {
     public function validate($username, $password)
     {

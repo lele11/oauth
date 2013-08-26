@@ -11,7 +11,7 @@ return array(
         // Distribution license, required
         'license'       => 'New BSD',
         // Logo image, for admin, optional
-        'logo'          => 'image/logo.jpg',
+        //'logo'          => 'image/logo.jpg',
         // Readme file, for admin, optional
         'readme'        => 'docs/readme.txt',
         // Direct download link, available for wget, optional

@@ -70,7 +70,6 @@ class AuthorizationCode extends AbstractGrantType
         $createFreshToken = Service::server('grant')->hasGrantType('refresh_token');
         $token = parent::createToken($createFreshToken);
 
-
         return $token;
     }
 }
