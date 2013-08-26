@@ -275,8 +275,8 @@ class Service
             $response_type[] = 'token';
         }
         if ($data['code']) {
-            $response_type[] ='code';
-            $grant_types['authorization_code'] = 'AuthorizationCode';           
+            $response_type[] = 'code';
+            $grant_types['authorization_code'] = 'AuthorizationCode';
         }
         if ($data['password']) {
             $grant_types['password'] = 'Password';
@@ -284,7 +284,7 @@ class Service
         if ($data['client']) {
             $grant_types['client_credentials'] = 'ClientCredentials';
         }
-        
+
         return $config = array(
             'server'    => array(
                 'authorization' => array(

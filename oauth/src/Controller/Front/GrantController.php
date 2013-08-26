@@ -4,7 +4,6 @@ namespace Module\Oauth\Controller\Front;
 use Pi;
 use Pi\Mvc\Controller\ActionController;
 use Pi\Oauth\Provider\Service as Oauth;
-use Module\Oauth\Lib\UserHandler as User;
 
 class GrantController extends ActionController
 {

@@ -35,7 +35,7 @@ class ClientRegisterForm extends BaseForm
         $this->add(array(
             'name'          => 'redirect_uri',
             'options'       => array(
-                'label' => __('OAuth Callback Page'),
+                'label' => __('Redirect Uri'),
             ),
             'attributes'    => array(
                 'type'  => 'text',
@@ -55,7 +55,7 @@ class ClientRegisterForm extends BaseForm
         $this->add(array(
             'name'          => 'logo',
             'options'       => array(
-                'label' => __('Client Logo'),
+                'label' => __('Client Logo Uri'),
             ),
             'attributes'    => array(
                 'type'  => 'text',

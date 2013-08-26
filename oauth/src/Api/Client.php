@@ -4,7 +4,6 @@ namespace Module\Oauth\Api;
 use Pi;
 use Pi\Application\AbstractApi;
 
-
 /**
 * SDK的API接口，共有三个对外接口
 *
@@ -57,7 +56,7 @@ class Client extends AbstractApi
     public function token($module, $server)
     {
         //考虑为token的存储加上模块的信息，方便管理
-        if (isset($_SESSION['token'])) {
+        if (isset($_SESSION['token'])) {//TODO multi token
             $arr = $_SESSION['token'];
         }
         if (isset($arr['access_token']) && $arr['access_token']) {
@@ -68,7 +67,7 @@ class Client extends AbstractApi
             if (isset($arr['refresh_token']) && $arr['refresh_token']) {
                 $token['refresh_token'] = $arr['refresh_token'];
             } 
-        } 
+        }
         return $token;
     }
 
@@ -80,7 +79,7 @@ class Client extends AbstractApi
      * @param array $scope 授权范围数组，array('','',...)
      * @param string $callback 回调地址 默认为模块提供的回调函数地址
      * @return string 
-    */
+     */
     public function getAuthorizeUrl($module, $server, $scope = NULL, $callback = NULL)
     {
         $client = $this->getClient($module, $server);
@@ -93,25 +92,24 @@ class Client extends AbstractApi
         }
         $params = array();
         $params['client_id'] = $client['client_id'];
-        $params['redirect_uri'] = $callback ? $callback : 'http://' . $_SERVER['HTTP_HOST'] . '/oauth/consumer/callback';
-        $params['response_type'] = 'code';        
+        $params['redirect_uri'] = $callback ? $callback : $this->getUrl('', 'callback');
+        $params['response_type'] = 'code';
         $params['scope'] = $scope_str;
         $params['state'] = $this->setState($module, $server);
-     
-        return $client['server_host'] . '/oauth/authorize/index' . "?" . http_build_query($params);       
+        return $this->getUrl($client['server_host'], 'authorize') . "?" . http_build_query($params);
     }
 
     /**
-     * 获取access_token
-     * @param string $module 调用接口的模块名称
-     * @param string $server 授权服务器的名称
-     * @param string $type 请求的类型,可以为:code, password, token, client
-     * @param array $keys 其他参数：
-     *   - 当$type为code时： array('code'=>..., 'redirect_uri'=>...)
-     *   - 当$type为password时： array('username'=>..., 'password'=>...)
-     *   - 当$type为token时： array('refresh_token'=>...)
-     *   - 当$type为client时：null
-     * @return array 
+    * 获取access_token
+    * @param string $module 调用接口的模块名称
+    * @param string $server 授权服务器的名称
+    * @param string $type 请求的类型,可以为:code, password, token, client
+    * @param array $keys 其他参数：
+    *   - 当$type为code时： array('code'=>..., 'redirect_uri'=>...)
+    *   - 当$type为password时： array('username'=>..., 'password'=>...)
+    *   - 当$type为token时： array('refresh_token'=>...)
+    *   - 当$type为client时：null
+    * @return array 
     */
     public function getAccessToken( $module, $server, $type , $keys ) 
     {
@@ -137,27 +135,52 @@ class Client extends AbstractApi
             $params['username'] = $keys['username'];
             $params['password'] = $keys['password'];
         } elseif ( $type === 'client') {
-            $params['grant_type'] = 'clientcresentials';            
+            $params['grant_type'] = 'clientcresentials';
         }
-        $tokenUrl = $client['server_host'] . '/oauth/grant/index';
+        $tokenUrl = $this->getUrl($client['server_host'], 'grant');
         $response = $this->oAuthRequest($tokenUrl, 'POST', $params);
-        $token = json_decode($response, true);
+        $token = json_decode($response, true);print_r($token['exception']);exit;
         if (!$token['error']) {
             $this->setToken($token);
-        } else {
-            return $token;
         }
+
+        return $token;
     }
 
     private function setToken($token)
     {
-        unset($_SESSION['token']);
-        $_SESSION['token'] = array(
-            'access_token'  => $token['access_token'],
-            'expired'       => $token['expires_in'] + time(),
-            'refresh_token' => $token['refresh_token'],
-        );
+        $token['expired'] = $token['expires_in'] + time();
+        unset($_SESSION['token'], $token['expires_in']);
+        $_SESSION['token'] = $token;
     }
+
+    /**
+     * Get server grant url
+     *
+     * @param string $host
+     * @param string $type
+     * @return string
+     */
+    protected function getUrl($host, $type)
+    {
+        $host = rtrim($host, '/');
+        switch ($type) {
+            case 'authorize':
+                $host .= '/oauth/authorize/index';
+                break;
+            case 'grant':
+                $host .= '/oauth/grant/index';
+                break;
+            case 'callback':
+                $host = Pi::url('/oauth/consumer/callback');
+                break;
+            default:
+                break;
+        }
+        return $host;
+    }
+
+
     /**
     * 授权请求链接的state字符串，考虑添加时间标志，需要研究
     * @return string
@@ -165,7 +188,7 @@ class Client extends AbstractApi
     */
     private function setState($module, $server)
     {
-        $state = base64_encode($module . '-' . $server);
+        $state = base64_encode($module . '*@*' . $server);
         if (isset($_SESSION['state'])) {
             unset($_SESSION['state']);
         }
@@ -204,7 +227,6 @@ class Client extends AbstractApi
             case 'GET':
                 $url = $url . '?' . http_build_query($parameters);
                 return $this->http($url, 'GET');
-                break;
             default:
                 $headers = array();
                 if ( is_array($parameters) ) {
@@ -233,13 +255,13 @@ class Client extends AbstractApi
     {
         $ci = curl_init();        
         curl_setopt($ci, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
-        curl_setopt($ci, CURLOPT_USERAGENT, 'test');
+        curl_setopt($ci, CURLOPT_USERAGENT, 'test');//todo$this->useragent);//TODO
         // curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, $this->connecttimeout);
         // curl_setopt($ci, CURLOPT_TIMEOUT, $this->timeout);
         curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ci, CURLOPT_ENCODING, "");
         // curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, $this->ssl_verifypeer);
-        // curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, 1);
+//        curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, 1);
         curl_setopt($ci, CURLOPT_HEADER, FALSE);
  
         if ($method == 'POST') {
@@ -252,7 +274,21 @@ class Client extends AbstractApi
         curl_setopt($ci, CURLOPT_HTTPHEADER, $headers );
         curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE );
  
-        $response = curl_exec($ci);        
+        $response = curl_exec($ci);
+ 
+//        if (0) {
+//            echo "=====post data======\r\n";
+//            var_dump($postfields);
+// 
+//            echo "=====headers======\r\n";
+//            print_r($headers);
+// 
+//            echo '=====request info====='."\r\n";
+//            print_r( curl_getinfo($ci) );
+// 
+//            echo '=====response====='."\r\n";
+//            print_r( $response );
+//        }
         curl_close ($ci);
         return $response;
     }

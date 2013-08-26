@@ -45,14 +45,6 @@ CREATE TABLE `{refresh_token}` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `{scope}` (
-  `id` bigint(20) NOT NULL auto_increment,
-  `editor` varchar(50) ,
-  `module` varchar(32) NOT NULL,
-  `scope` varchar(200) NOT NULL,
-  PRIMARY KEY (`id`)
-);
-
 CREATE TABLE `{consumer_client}` (
   `id` bigint(20) NOT NULL auto_increment,
   `module` varchar(32) NOT NULL,
@@ -63,3 +55,12 @@ CREATE TABLE `{consumer_client}` (
   `create_time` int(11) NOT NULL,
   PRIMARY KEY  (`id`)
 );
+
+CREATE TABLE `{scope}` (
+  `id` bigint(20) NOT NULL auto_increment,
+  `editor` varchar(50) ,
+  `module` varchar(32) NOT NULL,
+  `scope` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
