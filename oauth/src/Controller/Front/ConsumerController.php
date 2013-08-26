@@ -8,7 +8,6 @@ class ConsumerController extends ActionController
 {
     public function indexAction()
     {
-        
     }
 
     /**
@@ -32,17 +31,17 @@ class ConsumerController extends ActionController
             if ($state != $_SESSION['state']) {
                 return false;
             }
-            list($module, $server) = explode("-", base64_decode($_SESSION['state']));
-            unset($_SESSION['state']);
+            list($module, $server) = explode('*@*', base64_decode($_SESSION['state']));
+//            unset($_SESSION['state']);TODO unuse for testing
         }
-        
+
         if (!$code) {
             $token['error'] = 'missing code';
         } else {
             $redirect_uri = Pi::url('/oauth/consumer/callback');
-            $token = Pi::service('api')->oauth(array('client','getAccessToken'),$module, $server,'code', array('code' => $code,'redirect_uri' => $redirect_uri));            
-        }
-        if (!isset($token['error'])) {              
+            $token = Pi::service('api')->oauth(array('client', 'getAccessToken'), $module, $server,'code', array('code' => $code,'redirect_uri' => $redirect_uri));
+        }var_dump($token);exit;
+        if (!isset($token['error'])) {
             // $this->view()->assign('url', $next);
             $this->view()->setTemplate('callback-jump');
         } else {

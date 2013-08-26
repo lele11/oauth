@@ -1,21 +1,21 @@
-<h3>用户授权页面</h3>
-<p>允许<?php echo $client['name'];?>使用以下数据：</p>
+<h3>User authorization</h3>
+<p><?php _e('Allow'); ?> <strong><?php echo $client['name'];?></strong> <?php _e('to access the following data'); ?>:</p>
 <ul>
-	<li>
-		<input type="checkbox" name="base"  chekced="disable" >
+    <li>
+<!--        <input type="checkbox" name="base" chekced="disable" >-->
 <?php
- if ($client['scope'] == 'base') {
- 	echo '个人资料';
- }
+    if ($client['scope'] == 'base') {
+        echo 'User Infomation';
+    }
 ?>
-	</li>
+    </li>
 </ul>
 <form method="post">
 
 <input type="hidden" value=1 name="auth">
-<input type="submit" value="授权">
+<input type="submit" value="<?php _e('Authorize'); ?>">
+<button onclick="back()">cancel</button>
 </form>
-<button onclick="back()">cancle</button>
 <script type="text/javascript">
 function back()
 {

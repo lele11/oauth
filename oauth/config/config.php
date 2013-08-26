@@ -108,7 +108,7 @@ $config['item'] = array(
         'title'         => _t('Enable Authorization Code'),
         'description'   => _t('Authorization Code will be supported if this option is enabled.'),
         'edit'          => 'checkbox',
-        'value'         => 0,
+        'value'         => 1,
         'filter'        => 'number_int',
         'category'      => 'grant_type',
     ),

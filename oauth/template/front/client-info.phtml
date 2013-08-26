@@ -45,84 +45,84 @@ float: left;
 <div id="showZone" >
   <div class="op_title">
   <div class="fl">
-    <span >应用基本信息</span>
+    <span>Client Infomation</span>
   </div>
-  <div class="fr"><a href="javascript:edit();" class="op_title_btn"><span>编辑</span></a></div>
+  <div class="fr"><a href="javascript:edit();" class="op_title_btn"><span><?php _e('Edit'); ?></span></a></div>
   </div>
   <div class="form_table">
   <dl class="clearfix" >
-    <dt>应用名称：</dt><dd><?php echo $client['name']; ?></dd>
+    <dt><?php _e('Client Name'); ?></dt><dd><?php echo $client['name']; ?></dd>
   </dl>
   <dl class="clearfix" >
-    <dt>应用地址：</dt><dd><?php echo $client['address']; ?></dd>
+    <dt><?php _e('Client Address'); ?></dt><dd><?php echo $client['address']; ?></dd>
   </dl>
     <dl class="clearfix" >
-    <dt>应用图标：</dt><dd><?php echo $client['logo']; ?></dd>
+    <dt><?php _e('Client Logo Uri'); ?></dt><dd><?php echo $client['logo']; ?></dd>
   </dl>
   <dl class="clearfix">
-    <dt>Client ID：</dt><dd><?php echo $client['client_id']; ?></dd>
+    <dt><?php _e('Client ID'); ?></dt><dd><?php echo $client['client_id']; ?></dd>
   </dl>
   <dl class="clearfix">
-    <dt>Client Secret：</dt><dd><?php echo $client['client_secret']; ?></dd>
+    <dt><?php _e('Client Secret'); ?></dt><dd><?php echo $client['client_secret']; ?></dd>
   </dl>
   <dl class="clearfix">
-    <dt>创建时间：</dt><dd><?php echo date('Y-m-d', $client['time_create']) ;?></dd>
+    <dt><?php _e('Create Time'); ?></dt><dd><?php echo date('Y-m-d H:i', $client['time_create']) ;?></dd>
   </dl>
   <dl class="clearfix">
-    <dt>授权回调地址：</dt><dd><?php echo $client['redirect_uri']; ?></dd>
+    <dt><?php _e('Redirect Uri'); ?></dt><dd><?php echo $client['redirect_uri']; ?></dd>
   </dl>
   <dl class="clearfix">
-    <dt>应用介绍：</dt><dd><?php echo $client['description']; ?></dd>
+    <dt><?php _e('Client Description'); ?></dt><dd><?php echo $client['description']; ?></dd>
   </dl>
   </div>
 </div>
 
 <div id="editZone" style="display:none">
   <div class="op_title">
-  <div class="fl"><span>应用基本信息</span></div>
+  <div class="fl"><span>Client Infomation</span></div>
   </div>
   <div class="form_table">
     <input id="id" type="hidden" value="<?php echo $client['id']; ?>">
   <dl class="clearfix">
-    <dt>应用名称：</dt><dd><input id="client_name" type="text" name="name" value="<?php echo $client['name']; ?>" ></dd>
-    <dd><div class="notice_warn">该名称也用于来源显示，不超过10个汉字或20个字母</div></dd>
+    <dt><?php _e('Client Name'); ?></dt><dd><input id="client_name" type="text" name="name" value="<?php echo $client['name']; ?>" ></dd>
+    <dd><div class="notice_warn"><?php _e('Used to display, no longer than 20 characters'); ?></div></dd>
   </dl>
   <dl class="clearfix">
-    <dt>Client ID：</dt><dd ><?php echo $client['client_id'];?></dd>
+    <dt><?php _e('Client ID'); ?></dt><dd ><?php echo $client['client_id'];?></dd>
   </dl>
   <dl class="clearfix">
-    <dt>Client Secret：</dt><dd><?php echo $client['client_secret'];?></dd>
+    <dt><?php _e('Client Secret'); ?></dt><dd><?php echo $client['client_secret'];?></dd>
   </dl>
     <dl class="clearfix">
-    <dt>应用地址：</dt><dd><input id="address" type="text" name="address" value="<?php echo $client['address']; ?>" ></dd>
-    <dd><div class="notice_warn">应用的地址</div></dd>
+    <dt><?php _e('Client Address'); ?></dt><dd><input id="address" type="text" name="address" value="<?php echo $client['address']; ?>" ></dd>
+    <dd><div class="notice_warn"><?php _e('Client Address'); ?></div></dd>
   </dl>
       <dl class="clearfix">
-    <dt>应用logo：</dt><dd><input id="logo" type="text" name="logo" value="<?php echo $client['logo']; ?>" ></dd>
-    <dd><div class="notice_warn">应用的图标</div></dd>
+    <dt><?php _e('Client Logo Uri'); ?></dt><dd><input id="logo" type="text" name="logo" value="<?php echo $client['logo']; ?>" ></dd>
+    <dd><div class="notice_warn"><?php _e('Client Logo Uri'); ?></div></dd>
   </dl>
   <dl class="clearfix">
-  <dt>授权回调地址：</dt><dd><input id="redirect_uri" type="text" name="redirect_uri" value="<?php echo $client['redirect_uri']; ?>"></dd>
-    <dd><div class="notice_warn">授权过程的回调地址必须在该域名地址下</div>
+  <dt><?php _e('Redirect Uri'); ?></dt><dd><input id="redirect_uri" type="text" name="redirect_uri" value="<?php echo $client['redirect_uri']; ?>"></dd>
+    <dd><div class="notice_warn"><?php _e('Callback address after authorization must under this uri'); ?></div>
     </dd>
   </dl>
   <dl class="clearfix">
-    <dt>应用介绍：</dt><dd><textarea id="description" name="description" ><?php echo $client['description']; ?></textarea></dd>
-    <dd><div class="notice_warn">简述应用的作用、使用方法等信息，将显示在应用广场中，不超过1000汉字</div></dd>
+    <dt><?php _e('Client Description'); ?></dt><dd><textarea id="description" name="description" ><?php echo $client['description']; ?></textarea></dd>
+    <dd><div class="notice_warn"><?php _e('Client description, no longer than 1000 characters'); ?></div></dd>
   </dl>
   <dl class="clearfix">
-    <dt>创建时间：</dt><dd><?php echo date('Y-m-d', $client['time_create']);?></dd>
+    <dt><?php _e('Create Time'); ?></dt><dd><?php echo date('Y-m-d', $client['time_create']);?></dd>
   </dl>
   <dl class="clearfix">
-    <dt> &nsp</dt>
+    <dt> </dt>
     <dd >
-    <button onclick="save()">保存</button><button onclick="cancle()">取消</button>
+    <button onclick="save()"><?php _e('Save'); ?></button><button onclick="cancle()"><?php _e('Cancel'); ?></button>
     </dd>
   </dl>
   </div>
 </div>
  <?php } else { ?>
-<div>还没有<a href="register">注册应用</a></div>
+<div><?php _e('Please'); ?><a href="register"><?php _e('register your client'); ?></a></div>
  <?php } ?>
 <script type="text/javascript">
 function save(){
