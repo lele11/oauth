@@ -32,7 +32,7 @@ For consumer(Authorization Code)
 
 ##### 3. Get access token
 - Url: \<host\>/oauth/grant/index
-- method: GET
+- method: POST
 - parameters:
 <table>
   <tr>
