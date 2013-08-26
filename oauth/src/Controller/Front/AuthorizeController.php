@@ -4,7 +4,6 @@ namespace Module\Oauth\Controller\Front;
 use Pi;
 use Pi\Mvc\Controller\ActionController;
 use Pi\Oauth\Provider\Service as Oauth;
-use Module\Oauth\Lib\UserHandler as User;
 
 class AuthorizeController extends ActionController
 {
@@ -19,7 +18,6 @@ class AuthorizeController extends ActionController
         * 还需要判断用户已经授权的操作流程
         */ 
 
-        // Oauth::boot($config);
         Oauth::boot($this->config());
         $authorize = Oauth::server('authorization');
         $request = Oauth::request();
@@ -39,19 +37,24 @@ class AuthorizeController extends ActionController
                 // User::logout();
             }
 
-            if ($login_status) {
-                // $this->loginPage();
-                $login_page = Pi::url('/system/login/index');//TODO
-                $this->view()->assign('login',$login_page);
-                $this->view()->setTemplate('authorize-redirect');
-                return;
-            }
+            // if ($login_status) {
+            //     $login_page = Pi::url('/system/login/index');//TODO
+            //     $this->view()->assign('login',$login_page);
+            //     $this->view()->setTemplate('authorize-redirect');
+            //     return;
+            // }
             if (!$request->ispost()) {
-                $client = Oauth::storage('client')->getClient($params['client_id']);
-                $this->view()->assign('client', $client);
-                $this->view()->assign('backuri',$params['redirect_uri']);       
-                $this->view()->setTemplate('authorize-auth');
-                return; 
+                //check if user has authorized this client
+                $isAuth = Oauth::storage('access_token')->checkUserAuth($params['resource_owner'], $params['client_id']);
+                if ($isAuth) {
+                    $authorize->process($request);
+                } else {
+                    $client = Oauth::storage('client')->getClient($params['client_id']);
+                    $this->view()->assign('client', $client);
+                    $this->view()->assign('backuri',$params['redirect_uri']);       
+                    $this->view()->setTemplate('authorize-auth');
+                    return;  
+                }                
             } else {
                 $authorize->process($request);
             }            
@@ -61,17 +64,6 @@ class AuthorizeController extends ActionController
         $this->response->setHeaders($result->getHeaders());
         $this->response->setContent($result->setContent()->getContent());
         return $this->response;
-    }
-
-    /**
-    * redirect to login page ,the address of log page is provided by resource owner 
-    * 原计划使用函数进行跳转，由于URL转码问题，使用JavaScript进行
-    */
-    protected function loginPage()
-    {
-        $loacation = Pi::url('') . $this->request->getServer('REDIRECT_URL');        
-        $resource_login = 'http://pi-oauth.com/system/login/index/';
-        $this->redirect()->toUrl($resource_login);
     }
 
     /**
