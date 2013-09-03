@@ -1,0 +1,85 @@
+<ul class="nav nav-tabs">
+    <li>
+        <a href="<?php echo $this->url('', array('action' => 'index')); ?>" title="<?php _e('Client List'); ?>">
+            <?php _e('Client List'); ?>
+        </a>
+    </li>
+    <li class="active">
+        <a href="<?php echo $this->url('', array('action' => 'verify')); ?>" title="<?php _e('Client Verify'); ?>">
+            <?php _e('Client Verify');?>
+        </a>
+    </li>    
+</ul>
+
+<h2 class="page-header"><?php _e('Client Verify List'); ?></h2>
+<table class="table">
+<tr>
+	<td><?php _e('logo');?></td>
+	<td><?php _e('name');?></td>
+	<td><?php _e('brief');?></td>
+	<td><?php _e('creater');?></td>
+	<td><?php _e('operate');?></td>
+</tr>
+<?php
+	foreach ($list as $client) { ?>
+	<tr>
+		<td>
+			<img src=="<?php echo $client['logo'];?>">
+		</td>
+		<td>
+			<?php echo $client['name'];?>
+		</td>
+		<td>
+			<?php echo $client['description'];?>
+		</td>
+		<td>
+			<!-- <a href="<?php //echo $client['uid'];?>"> -->
+				<?php echo $client['username'];?>
+			<!-- </a> -->
+		</td>
+		<td>
+			<div>
+				<button data="<?php echo $client['id']?>" onclick="verify(this, 1)">y</button>
+				<button data="<?php echo $client['id']?>" onclick="verify(this, 0)">n</button>
+			</div>
+			<div style="position: absolute;display: none;">
+				some reason:<input type="textarea" value="">
+				<button data="<?php echo $client['id']?>" onclick="verify(this, 2)">OK</button>
+			</div>
+		</td>	
+	</tr>
+<?php	}
+?>
+</table>
+<script type="text/javascript">
+function verify(ob, action)
+{
+	var button = $(ob);
+	if (action == 1) {
+		$.ajax({
+			url : "verify",
+			type : "POST",
+			data : {id : button.attr("data")},
+			success: function(data){
+				window.location.reload();
+			}
+		});
+	} 
+	if (action == 0) {
+		var tem = button.parent();
+		tem.css("display","none");
+		tem.next().css("display","");
+	}
+	if (action == 2) {
+		$.ajax({
+			url : "verify",
+			type : "POST",
+			data : {reason : button.prev().val(),id : button.attr("data")},
+			success: function(data){
+				window.location.reload();
+			}
+		});
+	}
+}
+</script>
+

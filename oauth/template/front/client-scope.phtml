@@ -1,0 +1,48 @@
+<div class="span4">
+    <h3>select client</h3>
+    <form method="GET">    
+        <select id="scope-select" list-url="scope?id=">
+        <?php foreach($client as $id => $value) {?>
+            <option value="<?php echo $id ?>" <?php echo $clientid == $id ? 'selected' : '';?>>
+                <?php echo $value['name'];?>
+            </option>
+        <?php }?>
+        </select>
+    </form>
+</div>
+
+<div class="span5">
+    <h4>scope list</h4>
+    <?php foreach($scope as $value) {?>
+    <label class="checkbox">
+        <input type="checkbox" <?php echo in_array($value['name'], $client[$clientid]['scope']) ? 'checked' : '';?> id="<?php echo $value['name']?>"><?php echo $value['desc']?>
+    </label>
+    <?php }?> 
+    <button id="<?php echo $client;?>" class="btn scope-apply"><?php _e('Apply')?></button>
+</div>
+
+<script type="text/javascript">
+(function($) {
+    $("#scope-select").change(function() {
+        var $this = $(this);
+        location.href = $this.attr('list-url') + $this.val();
+    });
+    $(".scope-apply").click(function(){
+        var checked = $(".scope-list input:checked");
+        var id = new Array();
+        for(var i=0; i<checked.length;i++) {
+            id[i] = checked[i].id;
+        }
+        $.ajax({
+            url : "scope",
+            type : "POST",
+            data : {scopeid : id.join(","), client : this.id},
+            success : function(){
+                window.location.reload();
+            }
+        });
+    });
+})(jQuery)
+
+
+</script>

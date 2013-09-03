@@ -27,29 +27,29 @@ return array(
                 ),
             ),
 
-            'provider'      => array(
+            'client'      => array(
                 'label'         => '服务端管理',
                 'route'         => 'admin',
-                'controller'    => 'provider',
+                'controller'    => 'client',
                 'action'        => 'index',
 
                 'pages'       => array(
                     'list'  => array(
                         'label'      => '客户端列表',
                         'route'      => 'admin',
-                        'controller' => 'provider',
+                        'controller' => 'client',
                         'action'     => 'list',   
                     ),
                     'check'     => array(
                         'label'      => '审核管理',
                         'route'      => 'admin',
-                        'controller' => 'provider',
+                        'controller' => 'client',
                         'action'     => 'consumer',
                     ),
                     'scope'     => array(
                         'label'      => '权限控制',
                         'route'      => 'admin',
-                        'controller' => 'provider',
+                        'controller' => 'client',
                         'action'     => 'scope',
                     ),
                 ),

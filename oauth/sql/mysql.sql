@@ -9,7 +9,10 @@ CREATE TABLE `{client}` (
   `logo` varchar(100) NOT NULL,
   `type` varchar(32) ,
   `scope` varchar(32) NOT NULL default 'base',
-  `isverify` bool default false,
+  `scope_apply` ENUM('0', '1', '2') default 0,
+  `scope_detail` varchar(100) , 
+  `verify` ENUM('0', '1', '2') default 0,
+  `verify_result` varchar(200) ,
   `description` varchar(200),
   `time_create` int(20) default NULL,
   PRIMARY KEY  (`id`)
@@ -58,9 +61,7 @@ CREATE TABLE `{consumer_client}` (
 
 CREATE TABLE `{scope}` (
   `id` bigint(20) NOT NULL auto_increment,
-  `editor` varchar(50) ,
-  `module` varchar(32) NOT NULL,
-  `scope` varchar(200) NOT NULL,
+  `name` varchar(50) ,
+  `desc` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
 );
-

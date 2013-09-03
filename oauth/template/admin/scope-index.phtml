@@ -1,0 +1,62 @@
+<ul class="nav nav-tabs">
+    <li class="active">
+        <a href="<?php echo $this->url('', array('action' => 'index')); ?>" title="<?php _e('Scope Manage'); ?>">
+            <?php _e('Scope Manage'); ?>
+        </a>
+    </li>
+    <li>
+        <a href="<?php echo $this->url('', array('action' => 'verify')); ?>" title="<?php _e('Scope Verify'); ?>">
+            <?php _e('Scope Verify');?>
+        </a>
+    </li>    
+</ul>
+
+<style type="text/css">.add-form label{display: inline;margin: 15px;}</style>
+<h2><?php _e('Scope List') ?></h2>
+<div class="mb10" style="padding:10px;">
+    <button class="btn btn-primary addscope" ><?php _e('Add Scope');?></button>
+</div>
+<div class="add-form from-inline" style="display: none;">
+    <?php echo $this->form()->openTag($form) ?>
+    <?php $element = $form->get('name');
+    echo $this->formLabel($element);
+    echo $this->forminput($element);?>
+    <?php $element = $form->get('desc');
+    echo $this->formLabel($element); 
+    echo $this->forminput($element);?>
+    <?php $element = $form->get('submit');
+    echo $this->formsubmit($element);?>
+    <?php echo $this->form()->closeTag() ?>
+</div>
+
+<table class="table">
+    <tr>
+        <td><?php _e('name')?></td>
+        <td><?php _e('brief')?></td>
+        <td><?php _e('manage')?></td>
+    </tr>
+    <?php foreach($list as $value) {?>
+    <tr>
+        <td><?php echo $value['name']?></td>
+        <td><?php echo $value['desc']?></td>
+        <td>
+            <button data="<?php echo $value['id'];?>" class="btn scope-btn"><?php _e('delete')?></button>
+        </td>
+    </tr>
+    <?php }?>
+</table>
+<script type="text/javascript">
+$(".scope-btn").click(function(){
+    $.ajax({
+        url : "scope/delete",
+        type : "POST",
+        data : {id : this.getAttribute("data")},
+        success : function(){
+            window.location.reload();
+        }
+    });
+});
+$(".addscope").click(function () {
+    $(".add-form").toggle();
+});
+</script>

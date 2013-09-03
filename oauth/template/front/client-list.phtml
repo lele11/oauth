@@ -1,72 +1,46 @@
-<style type="text/css">
-.client-list-container{
-	padding-left: 50px;
-	
-	width: 600px;
-}
-.client-item{
-	list-style: none;
-	padding-top: 20px;
-}
-.client-logo{
-position: relative;
-float: left;
-width: 75px;
-}
-.client-logo a{
-height: 75px;
-width: 75px;
-display: block;
-position: absolute;
-top: 0;
-left: -3px;
-z-index: 20;
-}
-.client-logo img{
-	position: absolute;
-height: 64px;
-width: 64px;
-z-index: 0;
-}
-.client-content{
-	margin-left: 100px;
-}
-.client-info{
-float: left;
-width: 400px;
-padding-top: 2px;
-}
-.client-handler{
-	float: right;
-	padding-top: 20px;
-}
-</style>
+<h2 class="page-header"><?php _e('Client List'); ?></h2>
+<a style="float:right;" class="btn btn-primary" href="scope"><?php _e('Go To Apply Scope');?></a>
+<table class="table">
+    <tr>
+        <td><?php _e('logo')?></td>
+        <td><?php _e('name')?></td>
+        <td><?php _e('operation')?></td>
+    </tr>
+    <?php foreach ($client as $value) {?>
+    <tr>
+        <td>
+            <a class="pic" href="list?id=<?php echo $value['id'];?>">
+                <img class="img" src="<?php echo $value['logo'];?>">
+            </a>
+        </td>
+        <td>
+            <a href="list?id=<?php echo $value['id'];?>"><?php echo $value['name'];?></a>
+        </td>   
+        <td>
+        <?php 
+            if ($value['verify'] == 0) { 
+            echo '<button id="' . $value['id'] . '" class="verify-btn">' . __('verify client') . '</button>';
+            } elseif ($value['verify'] == 1) {
+                _e('verifing');
+            } else {
+                echo '<p>' . __('Have Been Verified') . '</p>';
+            }
+        ?>
+        </td>
+    </tr>
+    <?php }?>
+</table>
 
 
-
-<div class="client-list-container">
-	<ul class="client-list">
-		<?php foreach ($client as $value) {d($value);?> 
-		<li class="client-item">
-			<div class="client-logo">
-				<a class="pic" href="list?id=<?php echo $value['id'];?>"></a>
-				<img class="img" src="<?php echo $value['logo'];?>">
-			</div>
-			<div class="client-content clearfix">
-				<div class="client-info">
-					<p class="client-name">
-						<a href="list?id=<?php echo $value['id'];?>"><?php echo $value['name'];?></a>
-					</p>
-					<p class="client-desc">
-						<?php echo $value['description'];?>
-					</p>
-				</div>
-				<div class="client-handler">
-					<?php echo $value['isverify'] ? _t('verified') : _t('Not verified');?>
-				</div>
-			</div>
-
-		</li>
- 		<?php } ?>
-	</ul>	
-</div>
+<script type="text/javascript">
+    $(".verify-btn").click(function(){
+        $.ajax({
+            type : "get",
+            url : "verify",
+            data : {id : this.id},
+            success: function(data) {
+                window.location.reload();
+            }
+        });
+    }); 
+</script>

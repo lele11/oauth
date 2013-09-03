@@ -1,0 +1,44 @@
+<ul class="nav nav-tabs">
+    <li>
+        <a href="<?php echo $this->url('', array('action' => 'index')); ?>" title="<?php _e('Scope Manage'); ?>">
+            <?php _e('Scope Manage'); ?>
+        </a>
+    </li>
+    <li class="active">
+        <a href="<?php echo $this->url('', array('action' => 'verify')); ?>" title="<?php _e('Scope Verify'); ?>">
+            <?php _e('Scope Verify');?>
+        </a>
+    </li>    
+</ul>
+<table class="table">
+    <tr>
+        <td><?php _e('client')?></td>
+        <td><?php _e('scope')?></td>
+        <td><?php _e('manage')?></td>
+    </tr>
+    <?php foreach($list as $value) {?>
+    <tr>
+        <td><?php echo $value['name']?></td>
+        <td><?php 
+            foreach($value['scope'] as $name => $detail) {
+                echo '<li>' .$detail . '</li>';
+            }
+        ?></td>
+        <td>
+            <button id="<?php echo $value['id'];?>" class="btn scope-btn"><?php _e('OK')?></button>
+        </td>
+    </tr>
+    <?php }?>
+</table>
+<script type="text/javascript">
+    $(".scope-btn").click(function(){
+        $.ajax({
+            type : "POST",
+            url : "verify",
+            data : {id : this.id},
+            success: function(data) {
+                window.location.reload();
+            }
+        });
+    });
+</script>

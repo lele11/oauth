@@ -40,7 +40,7 @@ class ConsumerController extends ActionController
         } else {
             $redirect_uri = Pi::url('/oauth/consumer/callback');
             $token = Pi::service('api')->oauth(array('client', 'getAccessToken'), $module, $server,'code', array('code' => $code,'redirect_uri' => $redirect_uri));
-        }var_dump($token);exit;
+        }
         if (!isset($token['error'])) {
             // $this->view()->assign('url', $next);
             $this->view()->setTemplate('callback-jump');

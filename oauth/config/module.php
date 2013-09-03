@@ -59,6 +59,7 @@ return array(
                     'refresh_token'         => 'table',
                     'user_authorization'    => 'table',
                     'consumer_client'       => 'table',
+                    'scope'                 => 'table',
                    )
             ),
             // Module configs

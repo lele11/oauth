@@ -6,13 +6,12 @@ use Pi\Mvc\Controller\ActionController;
 use Pi\Oauth\Provider\Service as Oauth;
 use Module\Oauth\Form\ClientRegisterForm;
 use Module\Oauth\Form\ClientRegisterFilter;
-use Module\Oauth\Lib\UserHandler as User;
 
 class ClientController extends ActionController
 {
     public function indexAction()
     {
-        // $this->view()->setTemplate('client-index');
+        $this->view()->setTemplate('client-index');
     }
 
     /**
@@ -21,7 +20,7 @@ class ClientController extends ActionController
     public function registerAction()
     {
         if (!Pi::user()->hasIdentity()) {
-            $login_page = 'http://pi-oauth.com/system/login/index';
+            $login_page = Pi::url('system/login');
             $this->view()->assign('login',$login_page);
             $this->view()->setTemplate('authorize-redirect');
             return;
@@ -38,8 +37,10 @@ class ClientController extends ActionController
                 return;
             }
             $uid = Pi::user()->getUser()->id;
-            $data = $form->getData();       
-            d($data);     
+            $data = $form->getData();
+            if (!$data['logo']) {
+                $data['logo'] = "/asset/oauth/logo.png";
+            }        
             $data = array(
                 'name'          => $data['name'],
                 'redirect_uri'  => urldecode(urldecode($data['redirect_uri'])),
@@ -53,7 +54,8 @@ class ClientController extends ActionController
             $result = Oauth::storage('client')->addClient($data);
             $this->redirect()->toUrl('/oauth/client/list');
             return;
-        }
+        }        
+        $this->view()->assign('title', __('Client register'));
         $this->view()->assign('form', $form);
         $this->view()->setTemplate('client-register');        
     }
@@ -91,7 +93,7 @@ class ClientController extends ActionController
     }
 
     /*
-    * an ajax action , update client info
+    * an ajax action , update client info, must POST request
     */
     public function updateAction()
     {
@@ -103,5 +105,50 @@ class ClientController extends ActionController
         Oauth::boot($this->config());
         $result = Oauth::storage('client')->update($post['id'],$post);
         return $result;
+    }
+
+    /**
+    * an ajax action , verify client info request
+    */
+    public function verifyAction()
+    {
+        $id = $this->params('id','');
+        if (!$id) {
+            return ;
+        }
+        Oauth::boot($this->config());
+        $result = Oauth::storage('client')->update($id, array('verify' => 1));
+        return $result;
+    }
+
+    public function scopeAction()
+    {
+        if ($this->request->ispost()) {
+            $param = $this->request->getPost()->toArray();
+            Oauth::boot($this->config());
+            $result = Oauth::storage('client')->update($param['client'], 
+                array('scope_apply' => 1, 'scope_detail' => $param['scopeid'])
+            );
+            return ;
+        }
+        $clientid = $this->params('id');
+        $userid = Pi::user()->getUser()->id;
+        $client_model = Pi::model('client', 'oauth');
+        $select = $client_model->select()
+                        ->columns(array('id', 'name', 'scope'))
+                        ->where(array('uid' => $userid));
+        $client = $client_model->selectWith($select)->toArray();
+        foreach($client as $value) {
+            $client_data[$value['id']] = array(
+                'name' => $value['name'],
+                'scope' => explode(',', $value['scope']),
+            );
+        }
+        $model = $this->getModel('scope');
+        $scope = $model->select(array())->toArray();
+        $this->view()->assign('client', $client_data);
+        $this->view()->assign('scope', $scope);
+        $this->view()->assign('clientid', $clientid);
+        $this->view()->setTemplate('client-scope');
     }
 }
